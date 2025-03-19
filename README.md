@@ -19,7 +19,6 @@ Asegúrate de tener instalado Node.js (versión LTS recomendada). Luego, en la r
 
     npm install
 
-
 ### Ejecutar en modo desarrollo
 
 Para iniciar la aplicación en modo desarrollo con Vite, utiliza:
@@ -33,7 +32,7 @@ Esto abrirá la aplicación en tu navegador en la URL indicada (por defecto http
 Para generar los archivos optimizados para producción:
 
     npm run build
-    
+
 Y para previsualizar la build:
 
     npm run preview
@@ -48,6 +47,10 @@ Si aún no las has instalado, ejecuta:
 
     npm install --save-dev jest @testing-library/react @testing-library/jest-dom jest-environment-jsdom
 
+Ejecuta además las siguientes dependencias:
+
+    npm install --save-dev @babel/plugin-transform-runtime @babel/preset-env @babel/preset-react
+
 ### Ejecutar las pruebas
 
 Agrega el siguiente script en el package.json (si no existe):
@@ -56,10 +59,31 @@ Agrega el siguiente script en el package.json (si no existe):
     "test": "jest"
     }
 
+Después crea un archivo en la raíz del proyecto con nombre "jest.config.cjs" con el siguiente contenido:
+
+    module.exports = {
+    transform: {
+        "^.+\\.[jt]sx?$": "babel-jest",
+    },
+    testEnvironment: 'jest-environment-jsdom',
+    setupFiles: ['./jest.setup.js'],
+    };
+
+Seguidamente crea un archivo de igual forma en la raíz del proyecto con nombre "jest.setup.js" y agrega lo siguiente:
+
+    import { TextEncoder, TextDecoder } from "text-encoding";
+    global.TextEncoder = TextEncoder;
+    global.TextDecoder = TextDecoder;
+    global.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    };
+
 Luego, ejecuta:
 
     npm test
-    
+
 Esto ejecutará todas las pruebas definidas en archivos con extensión .test.js o .spec.js.
 
 ### Storybook
@@ -71,10 +95,8 @@ Se ha configurado Storybook para documentar y testear cada uno de los componente
 Para levantar Storybook, ejecuta:
 
     npm run storybook
-    
+
 Esto abrirá Storybook en http://localhost:6006, donde podrás explorar las historias de cada componente.
-
-
 
 # Decisiones técnicas y arquitectónicas
 
@@ -101,8 +123,6 @@ Se eligió Formik para manejar la validación y el estado de los formularios de 
 ## Jest y Storybook:
 
 Jest se utiliza para asegurar la calidad del código mediante pruebas unitarias, mientras que Storybook documenta y permite testear visualmente cada componente de la aplicación.
-
-
 
 # Mejoras pendientes
 
